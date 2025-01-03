@@ -22,9 +22,9 @@ def calculate_codes(number):
         complement_code = direct_code
     else:
         # Для отрицательных чисел добавляем 1 к обратному коду
-        complement_code = f"{int(inverse_code, 2) + 1:08b}"[-8:]
+        complement_code = f"{int(inverse_code, 2) + 1:08b}"
 
-    return direct_code, inverse_code, complement_code
+    return bin(int(direct_code, 2) + 128)[2:], inverse_code, complement_code
 
 # Создание графического интерфейса
 layout = [
