@@ -1,0 +1,6 @@
+# Remove VSCode artifacts
+/.vscode
+/.idea
+
+# Remove executables 
+*.out
