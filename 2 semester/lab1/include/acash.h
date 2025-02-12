@@ -4,6 +4,8 @@
 #include <stdio.h>  // I|O-stream
 #include <time.h>   // Работа с временем (Дата открытия и взятие текущего времени)
 #include <string.h> // Копирование строк, сравнение строк
+#include <stdlib.h> // Использование динамической памяти
+#include <ctype.h>  // Использование для проверки на букву
 
 
 // Хранение состояния (типа) карты пользователя
@@ -53,7 +55,7 @@ ACCOUNT* CreateAccount(
     const char* card_number,
     const char* currency,
     const char* card_type,
-    const double* balance
+    const double balance
 );
 
 /* 
