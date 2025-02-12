@@ -1,5 +1,4 @@
 #include "../include/acash.h" // Подключаем заголовочный файл
-#include <exception>
 
 ACCOUNT* CreateAccount(
     const char* identifier,
