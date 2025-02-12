@@ -173,22 +173,38 @@ void CompareTwoCards(const ACCOUNT* first_card, const ACCOUNT* second_card)
     }
 }
 
-void DepositAccount(ACCOUNT* account) 
+void DepositAccount(ACCOUNT* account, const double sum_to_deposit) 
 {
-    double deposit = 0.;
-
-    // Проверяем чтобы была введа положительная сумма внесения
-    do {
-        printf("Сумма для внесения: ");
-        if (isalpha(scanf("%lf", &deposit))  || deposit <= 0) {
-            printf("Ошибка! Сумма для внесения должна быть положительным числом!\n\n");
-            deposit = 0.;
-        }
-            
-    } while (deposit <= 0);
+    // Проверяем чтобы была введена положительная сумма внесения
+    if (sum_to_deposit <= 0) {
+        printf("Ошибка! Сумма для внесения должна быть положительной!\n");
+        exit(-1);
+    }
+    
 
     // Добавляем сумму внесения и отображаем баланс
-    account->balance += deposit;
-    printf("Внесено: %.2lf%s\n", deposit, account->currency);
+    account->balance += sum_to_deposit;
+    printf("Внесено: %.2lf%s\n", sum_to_deposit, account->currency);
     printf("Текущий баланс: %.2lf%s\n\n", account->balance, account->currency);
+}
+
+void WithdrawMoney(ACCOUNT* account, const double sum_to_withdraw)
+{
+    // Проверка чтобы была введена положительная сумма снятия
+    if (sum_to_withdraw <= 0) {
+        printf("Ошибка! Сумма для внесения должна быть положительной!\n");
+        exit(-1);
+    }
+
+    // Достаточно баланса, чтобы снять деньги
+    if (account->balance - sum_to_withdraw > 0) {
+        account->balance -= sum_to_withdraw;
+        
+        // Отображаем баланс
+        printf("Снято: %.2lf%s\n", sum_to_withdraw, account->currency);
+        printf("Текущий баланс: %.2lf%s\n\n", account->balance, account->currency);
+    } else {
+        printf("На вашем счете недостаточно денег.\n");
+        exit(-1);
+    } 
 }
