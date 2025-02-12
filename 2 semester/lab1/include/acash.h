@@ -13,6 +13,9 @@
 #define CREDIT "credit"
 #define ESCROW "escrow"
 
+// Лимит для отрицательного баланса кредитной карты
+#define NEGATIVE_CREDIT_FIXED 10000
+
 // Хранение информации о дате создания
 typedef struct {
     int day,
@@ -86,7 +89,7 @@ void CompareTwoCards(const ACCOUNT* first_card, const ACCOUNT* second_card);
  *
  *
 */
-void DepositAccount(ACCOUNT* account);
+void DepositAccount(ACCOUNT* account, const double sum_to_deposit);
 
 /*
  *
@@ -96,7 +99,7 @@ void DepositAccount(ACCOUNT* account);
  *
  *
 */
-void WithdrawMoney(ACCOUNT* account);
+void WithdrawMoney(ACCOUNT* account, const double sum_to_withdraw);
 
 /*
  *
@@ -128,7 +131,12 @@ void ProfitAndWithdraw(const ACCOUNT* account);
  *
  *
 */
-void Transfer(const ACCOUNT* source_card, ACCOUNT* destination_card);
+void Transfer(
+        ACCOUNT* source_card, 
+        ACCOUNT* destination_card,
+        const double amount, 
+        const double commission_rate
+);
 
 /*
  *
@@ -138,7 +146,7 @@ void Transfer(const ACCOUNT* source_card, ACCOUNT* destination_card);
  *
  *
 */
-void IsAccountClosed(const ACCOUNT*  account);
+int IsAccountClosed(const ACCOUNT*  account);
 
 /*
  *
@@ -148,7 +156,7 @@ void IsAccountClosed(const ACCOUNT*  account);
  *
  *
 */
-void GetBonuses(BONUSES* bonuse_account);
+void GetBonuses(BONUSES* bonuses, const double amount);
 
 /*
  *
@@ -156,14 +164,55 @@ void GetBonuses(BONUSES* bonuse_account);
 
  @param: const BONUSES* bonuse_account | Бонусная карта 
  @param: ACCOUNT* account              | Расчетная карта пользователя
- @param: int* price              | Сумма для оплаты 
+ @param: int* price                    | Сумма для оплаты 
  *
  *
 */
-void UseBonuses(
-    const BONUSES* bonuse_account,
-    ACCOUNT* account,
-    int* price
-);
+double UseBonuses(BONUSES* bonuses, const double max_amount);
+
+/*
+ *
+ @brief: Пополнение счета с помощью бонусов
+ 
+ @param: ACCOUNT* account    | Расчетная карта пользователя
+ @param: BONUSES* bonuses    | Бонусная карта пользователя
+ @param: const double amount | Сумма бонусов для пополения расчетной карты
+ *
+*/
+void DepositWithBonuses(ACCOUNT* account, BONUSES* bonuses, const double amount);
+
+/*
+ *
+ @brief: Снятие с помощью бонусов
+ *
+ @param: ACCOUNT* account    | Расчетная карта пользователя 
+ @param: BONUSES* bonuses    | Бонусная карта пользователя
+ @param: const double amount | Сумма бонусов для снятия
+ *
+*/
+void WithdrawWithBonuses(ACCOUNT* account, BONUSES* bonuses, const double amount);
+
+/*
+ *
+ @brief: Снятие денег с карты с помощью процентной записи
+ *
+ @param: ACCOUNT* acconut  | Расчетная карта
+ @param: double percentage | Процентное соотношение для снятие
+ *
+*/
+void WithdrawPercentage(ACCOUNT* account, double percentage);
+
+/*
+ *
+ @brief: Пополение денег с помощью процентной записи
+ *
+ @param: ACCOUNT* account  | Расчетная карта
+ @paraM: double percentage | Процентное соотношение для пополнения
+ *
+*/
+void DepositPercentage(ACCOUNT* account, double percentage);
+
+// "Деструктор" для освобождения ресурсов
+void AccountDestroy(ACCOUNT* account); 
 
 #endif

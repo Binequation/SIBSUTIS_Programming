@@ -1,4 +1,5 @@
 #include "../include/acash.h" // Подключаем заголовочный файл
+#include <exception>
 
 ACCOUNT* CreateAccount(
     const char* identifier,
@@ -64,8 +65,7 @@ void AccountInfo(const ACCOUNT* account)
                 "2. Номер карты\n"
                 "3. Валюта\n"
                 "4. Тип карты\n"
-                "5. Баланс\n"
-        );
+                "5. Баланс\n");
         
         // Проверка на попадание в диапазон от (1-5) и отсутствия букв
         do {
@@ -102,8 +102,7 @@ void CompareTwoCards(const ACCOUNT* first_card, const ACCOUNT* second_card)
     printf("Первая карта имеет идентификатор: %s\n. "
            "Вторая карта имеет идентификатор: %s\n\n",
             first_card->identifier,
-            second_card->identifier
-    );
+            second_card->identifier);
     // Сравнение баланса
     if (first_card->balance > second_card->balance)
         printf("Баланс первой карты больше баланса второй (1: %lf, 2: %lf\n)",
@@ -121,13 +120,11 @@ void CompareTwoCards(const ACCOUNT* first_card, const ACCOUNT* second_card)
         printf("Дата открытия: %2d.%2d.%4d\n",
                 first_card->open_date.day,
                 first_card->open_date.month,
-                first_card->open_date.year
-        );
+                first_card->open_date.year);
         printf("Дата закрытия: %2d.%2d.%4d\n",
                 first_card->open_date.day,
                 first_card->open_date.month,
-                first_card->open_date.year
-        );
+                first_card->open_date.year);
     } else {
         printf("Карты имеют разную дату открытия и закрытия.\n");
 
@@ -136,26 +133,22 @@ void CompareTwoCards(const ACCOUNT* first_card, const ACCOUNT* second_card)
         printf("Дата открытия карты: %2d.%2d.%4d\n",
                 first_card->open_date.day,
                 first_card->open_date.month,
-                first_card->open_date.year
-        );
+                first_card->open_date.year);
         printf("Дата закрытия карты: %2d.%2d.%4d\n\n",
                 first_card->close_date.day,
                 first_card->close_date.month,
-                first_card->close_date.year
-        );
+                first_card->close_date.year);
 
         // Вторая карта
         printf("Идентификатор: %s", second_card->identifier);
         printf("Дата открытия карты: %2d.%2d.%4d\n",
                 second_card->open_date.day,
                 second_card->open_date.month,
-                second_card->open_date.year
-        );
+                second_card->open_date.year);
         printf("Дата закрытия карты: %2d.%2d.%4d\n\n",
                 second_card->close_date.day,
                 second_card->close_date.month,
-                second_card->close_date.year
-        );
+                second_card->close_date.year);
     }        
 
     // Сравнение по типу карт
@@ -164,12 +157,10 @@ void CompareTwoCards(const ACCOUNT* first_card, const ACCOUNT* second_card)
     else {
         printf("Идентификатор: %s, тип: %s\n", 
                 first_card->identifier,
-                first_card->card_type
-        );
+                first_card->card_type);
         printf("идентификатор: %s, тип: %s\n\n",
                 second_card->identifier,
-                second_card->card_type
-        );
+                second_card->card_type);
     }
 }
 
@@ -195,16 +186,189 @@ void WithdrawMoney(ACCOUNT* account, const double sum_to_withdraw)
         printf("Ошибка! Сумма для внесения должна быть положительной!\n");
         exit(-1);
     }
+   
+    // Если карта кредитная, то проверить не превысили ли нижний порог
+    if (strcmp(account->card_type, CREDIT) == 0) {
+        if (account->balance - sum_to_withdraw < NEGATIVE_CREDIT_FIXED) {
+            printf("Вы не можете снять деньги, потому что превысили максимально отрицательный порог!\n");
+            exit(-1);
+        } else {
+            account->balance -= sum_to_withdraw;
+            
+            // Отображаем баланс
+            printf("Снято: %.2lf%s\n", sum_to_withdraw, account->currency);
+            printf("Текущий баланс: %.2lf%s\n\n", account->balance, account->currency);
+            exit(0);
+        }
+    } else { // Дебетовая карта
+        // Проверка достаточно ли средств, чтобы снять деньги
+        if (account->balance > sum_to_withdraw) {
+            account->balance -= sum_to_withdraw;
+        
+            // Отображаем баланс
+            printf("Снято: %.2lf%s\n", sum_to_withdraw, account->currency);
+            printf("Текущий баланс: %.2lf%s\n\n", account->balance, account->currency);
+        } else {
+            printf("На вашем счете недостаточно денег.\n");
+            exit(-1);
+        } 
+    } 
+}
 
-    // Достаточно баланса, чтобы снять деньги
-    if (account->balance - sum_to_withdraw > 0) {
-        account->balance -= sum_to_withdraw;
+void WithdrawPercentage(ACCOUNT* account, double percentage) 
+{
+    if (percentage < 0 || percentage > 100) {
+        printf("Ошибка: процент должен быть от 0 до 100.\n");
+        exit(-1);
+    }
+
+    double amount = (account->balance * percentage) / 100.0;
+    if (strcmp(account->card_type, CREDIT) == 0) {
+        account->balance -= amount;
         
         // Отображаем баланс
-        printf("Снято: %.2lf%s\n", sum_to_withdraw, account->currency);
+        printf("Снято: %.2lf%% %.2lf %s)\n", 
+                percentage, account->balance, account->currency
+        );
         printf("Текущий баланс: %.2lf%s\n\n", account->balance, account->currency);
+    } else if (account->balance >= amount) {
+        account->balance -= amount;
+        printf("Снято:  %.2f%% (%.2f %s)", percentage, amount, account->currency);
+        printf("Текущий баланс: %.2lf %s", account->balance, account->currency);
     } else {
-        printf("На вашем счете недостаточно денег.\n");
+        printf("Error: Insufficient funds.\n");
+    }
+}
+
+void DepositPercentage(ACCOUNT* account, double percentage) 
+{
+    if (percentage < 0 || percentage > 100) {
+        printf("Ошибка: процент должен быть от 0 до 100.\n");
         exit(-1);
-    } 
+    }
+
+    double amount = (account->balance * percentage) / 100.0;
+    account->balance += amount;
+    printf("Deposited %.2f%% (%.2f %s). New balance: %.2f %s\n",
+           percentage, amount, account->currency, account->balance, account->currency);
+}
+
+void Transfer(
+        ACCOUNT *source_card, 
+        ACCOUNT *destination_card, 
+        const double amount, 
+        const double commission_rate
+)
+{
+    if (amount <= 0) {
+        printf("Ошибка: сума должна быть положительным числом\n");
+        exit(-1);
+    }
+
+    // Валюта разная
+    if (strcmp(source_card->currency, destination_card->currency) != 0) {
+        double commission = amount * commission_rate;
+        if (source_card->balance < amount + commission) {
+            printf("Ошибка: не хватает денег для совершения перевода!\n");
+            exit(-1);
+        }
+        source_card->balance -= (amount + commission); // Снимаем с комиссией
+        destination_card->balance += amount; // Совершаем перевод на другую карту
+        printf("Переведено: %.2lf %s с комиссией %.2lf %s\n",
+                amount, source_card->currency, commission, source_card->currency);
+    } else {
+        // Если валюты одинаковые, то перевод без комиссии
+        if (source_card->balance < amount) {
+            printf("Ошибка: недостаточно средств для перевода!\n");
+            exit(-1);
+        }
+        source_card->balance -= amount;
+        destination_card->balance += amount;
+        printf("Переведено: %.2lf %s", amount, source_card->currency);
+    }
+}
+
+int IsAccountClosed(const ACCOUNT *account)
+{
+    time_t my_time = time(NULL);
+    struct tm current_time = *localtime(&my_time);
+    int current_year  = current_time.tm_year + 1990,
+        current_day   = current_time.tm_mday,
+        current_month = current_time.tm_mon + 1; 
+
+    // Если срок службы просрочен - карта закрыта
+    if (current_year > account->close_date.year) return 1;
+    if (current_year == account->close_date.year && current_month > account->close_date.month) return 1;
+    if (current_year == account->close_date.year && current_month == account->close_date.month &&
+        current_day >= account->close_date.day) return 1;
+    return 0;
+}
+
+void GetBonuses(BONUSES* bonuses, const double amount) 
+{
+    if (!bonuses || amount <= 0) return;
+    double accrued = amount * bonuses->profit_percent;
+    bonuses->current_balance += accrued;
+    printf("Начислено%.2f бонусов.\nВсего бонусов: %.2f\n", accrued, bonuses->current_balance);
+}
+
+double UseBonuses(BONUSES* bonuses, const double max_amount) 
+{
+    if (!bonuses || max_amount <= 0) return 0.0;
+
+    double used = (bonuses->current_balance >= max_amount) ? max_amount : bonuses->current_balance;
+    bonuses->current_balance -= used;
+    printf("Использовано %.2f бонусов.\nТекущий баланс: %.2f\n", used, bonuses->current_balance);
+    return used;
+}
+
+void DepositWithBonuses(ACCOUNT* account, BONUSES* bonuses, const double amount) 
+{
+    if (amount <= 0) {
+        printf("Ошибка: сумма должна быть положительным числом.\n");
+        exit(-1);
+    }
+
+    account->balance += amount;
+    printf("Внесено %.2f %s.\nТекущий баланс: %.2f %s\n",
+           amount, account->currency, account->balance, account->currency);
+
+    // Начисление бонусов
+    if (bonuses) {
+        GetBonuses(bonuses, amount);
+    }
+}
+
+void WithdrawWithBonuses(ACCOUNT* account, BONUSES* bonuses, const double amount) 
+{
+    if (amount <= 0) {
+        printf("Ошибка: сумма должна быть положительным числом.\n");
+        return;
+    }
+
+    if (strcmp(account->card_type, CREDIT) == 0) {
+        // Для кредитной карты разрешен отрицательный баланс
+        double bonus_coverage = UseBonuses(bonuses, amount);  // Использование бонусов
+        double remaining = amount - bonus_coverage;
+
+        account->balance -= remaining;
+        printf("Списано %.2f %s (использовано %.2f бонусов).\nТекущий баланс: %.2f %s\n",
+               amount, account->currency, bonus_coverage, account->balance, account->currency);
+    } else if (account->balance >= amount) {
+        // Для дебетовой и эскроу карт проверяем баланс
+        double bonus_coverage = UseBonuses(bonuses, amount);  // Использование бонусов
+        double remaining = amount - bonus_coverage;
+
+        account->balance -= remaining;
+        printf("Списано %.2f %s (использовано %.2f бонусов).\nТекущий баланс:: %.2f %s\n",
+               amount, account->currency, bonus_coverage, account->balance, account->currency);
+    } else {
+        printf("Ошибка: недостаточно средств.\n");
+    }
+}
+
+void AccountDestroy(ACCOUNT *account)
+{
+    if (!account) return;
+    memset(account, 0, sizeof(ACCOUNT));
 }
