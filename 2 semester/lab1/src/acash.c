@@ -46,7 +46,7 @@ void AccountInfo(const ACCOUNT* account)
         printf("Введите ваш выбор (1 или 2): ");
         scanf("%hu", &choice);
         if (isalpha(choice)) {
-            printf("Ошибка! Введите число!\n");
+            perror("Ошибка! Введите число!\n");
             choice = 0;
         }
     } while (choice < 1 || choice > 2);
@@ -67,12 +67,12 @@ void AccountInfo(const ACCOUNT* account)
                 "5. Баланс\n"
         );
         
-
+        // Проверка на попадание в диапазон от (1-5) и отсутствия букв
         do {
             printf("Введите ваш выбор (1-5): ");
             scanf("%hu", &choice);
             if (isalpha(choice)) {
-                printf("Ошибка! Введите число!\n");
+                perror("Ошибка! Введите число!\n");
                 choice = 0;
             }
         } while (choice < 1 || choice > 5);
@@ -97,3 +97,98 @@ void AccountInfo(const ACCOUNT* account)
     }
 }
 
+void CompareTwoCards(const ACCOUNT* first_card, const ACCOUNT* second_card)
+{
+    printf("Первая карта имеет идентификатор: %s\n. "
+           "Вторая карта имеет идентификатор: %s\n\n",
+            first_card->identifier,
+            second_card->identifier
+    );
+    // Сравнение баланса
+    if (first_card->balance > second_card->balance)
+        printf("Баланс первой карты больше баланса второй (1: %lf, 2: %lf\n)",
+                first_card->balance, second_card->balance);
+    else if (first_card->balance < second_card->balance)
+        printf("Баланс первой карты меньше баланса второй (1: %lf, 2: %lf\n)",
+                first_card->balance, second_card->balance);
+    else 
+        printf("Балансы на двух картах эквивалентны (1; %lf, 2: %lf\n)",
+                first_card->balance, second_card->balance);
+
+    // Сравнение по датам открытия/закрытия
+    if (first_card->open_date.year == second_card->open_date.year) {
+        printf("Обе карты были открыты в одно время!\n");
+        printf("Дата открытия: %2d.%2d.%4d\n",
+                first_card->open_date.day,
+                first_card->open_date.month,
+                first_card->open_date.year
+        );
+        printf("Дата закрытия: %2d.%2d.%4d\n",
+                first_card->open_date.day,
+                first_card->open_date.month,
+                first_card->open_date.year
+        );
+    } else {
+        printf("Карты имеют разную дату открытия и закрытия.\n");
+
+        // Первая карта
+        printf("Идентификатор: %s\n", first_card->identifier);
+        printf("Дата открытия карты: %2d.%2d.%4d\n",
+                first_card->open_date.day,
+                first_card->open_date.month,
+                first_card->open_date.year
+        );
+        printf("Дата закрытия карты: %2d.%2d.%4d\n\n",
+                first_card->close_date.day,
+                first_card->close_date.month,
+                first_card->close_date.year
+        );
+
+        // Вторая карта
+        printf("Идентификатор: %s", second_card->identifier);
+        printf("Дата открытия карты: %2d.%2d.%4d\n",
+                second_card->open_date.day,
+                second_card->open_date.month,
+                second_card->open_date.year
+        );
+        printf("Дата закрытия карты: %2d.%2d.%4d\n\n",
+                second_card->close_date.day,
+                second_card->close_date.month,
+                second_card->close_date.year
+        );
+    }        
+
+    // Сравнение по типу карт
+    if (first_card->card_type == second_card->card_type) 
+        printf("Обе карты имеют одинаковый тип: %s", first_card->card_type);
+    else {
+        printf("Идентификатор: %s, тип: %s\n", 
+                first_card->identifier,
+                first_card->card_type
+        );
+        printf("идентификатор: %s, тип: %s\n\n",
+                second_card->identifier,
+                second_card->card_type
+        );
+    }
+}
+
+void DepositAccount(ACCOUNT* account) 
+{
+    double deposit = 0.;
+
+    // Проверяем чтобы была введа положительная сумма внесения
+    do {
+        printf("Сумма для внесения: ");
+        if (isalpha(scanf("%lf", &deposit))  || deposit <= 0) {
+            printf("Ошибка! Сумма для внесения должна быть положительным числом!\n\n");
+            deposit = 0.;
+        }
+            
+    } while (deposit <= 0);
+
+    // Добавляем сумму внесения и отображаем баланс
+    account->balance += deposit;
+    printf("Внесено: %.2lf%s\n", deposit, account->currency);
+    printf("Текущий баланс: %.2lf%s\n\n", account->balance, account->currency);
+}
