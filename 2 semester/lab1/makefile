@@ -1,7 +1,7 @@
 CC = gcc
-INCLUDE = includ
+INCLUDE = include/*.h
 CFLAGS = -O2 -Wall -Wextra
-SRC = src
+SRC = src/*.c
 OUTPUT = acash
 
 all:
