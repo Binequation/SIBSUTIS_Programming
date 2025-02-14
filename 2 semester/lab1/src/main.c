@@ -27,7 +27,8 @@ int main(void)
                     break;
                 }
 
-                char identifier[10], card_number[20], currency[10], card_type[20];
+                char identifier[IDENTIFIER_LIMIT], card_number[CARD_NUMBER_LIMIT], 
+                     currency[CURRENCY_NAME_LIMIT], card_type[CARD_TYPE_LIMIT];
                 double balance;
 
                 printf("Введите идентификатор карты: ");
@@ -197,6 +198,4 @@ int main(void)
                 printf("Неверный выбор! Пожалуйста, выберите снова.\n");
         }
     } while (choice != 0);
-
-    return 0;
 }
