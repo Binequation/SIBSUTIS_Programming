@@ -13,6 +13,16 @@
 #define CREDIT "credit"
 #define ESCROW "escrow"
 
+// Ограничения при создании карты
+#define IDENTIFIER_LIMIT    30
+#define CARD_NUMBER_LIMIT   15
+#define CURRENCY_NAME_LIMIT 20
+#define CARD_TYPE_LIMIT     15
+
+
+// Максимальное количество карт
+#define MAX_ACCOUNTS 4 
+
 // Лимит для отрицательного баланса кредитной карты
 #define NEGATIVE_CREDIT_FIXED 10000
 
@@ -25,10 +35,10 @@ typedef struct {
 
 // Хранение данных о пользовательском счете
 typedef struct {
-    char identifier[50],  // Идентификатор
-         card_number[50], // Номер расчетной карты
-         currency[30],    // Валюта на карте 
-         card_type[6];    // Тип карты (дебетовая, кредитная или эскроу)
+    char identifier[IDENTIFIER_LIMIT],     // Идентификатор
+         card_number[CARD_NUMBER_LIMIT],   // Номер расчетной карты
+         currency[CURRENCY_NAME_LIMIT],    // Валюта на карте 
+         card_type[CARD_TYPE_LIMIT];       // Тип карты (дебетовая, кредитная или эскроу)
     double balance;       // Баланс на счету
     
     DATE open_date,       // Дата открытия расчетной карты

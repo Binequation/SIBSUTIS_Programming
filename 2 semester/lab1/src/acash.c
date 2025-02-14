@@ -35,19 +35,24 @@ ACCOUNT* CreateAccount(
 
 void AccountInfo(const ACCOUNT* account)
 {
-    // Стартовое диалоговое окно
     printf("Вы хотите вывести все данные о карте или только определенные детали?\n"
-            "1 - Вывестии всю информаю о карте.\n"
-            "2 - Вывести определенную информаю\n"
-    );
+           "1 - Вывести всю информацию о карте.\n"
+           "2 - Вывести определенную информацию.\n");
 
     short choice;
     do {
         printf("Введите ваш выбор (1 или 2): ");
-        scanf("%hu", &choice);
-        if (isalpha(choice)) {
-            perror("Ошибка! Введите число!\n");
-            choice = 0;
+        
+        if (scanf("%hu", &choice) != 1) {
+            // Очищаем буфер ввода
+            while (getchar() != '\n');
+            printf("Ошибка! Введите число!\n");
+            choice = 0; 
+        } else {
+            // Если ввод успешен, проверяем диапазон
+            if (choice < 1 || choice > 2) {
+                printf("Ошибка! Выберите 1 или 2.\n");
+            }
         }
     } while (choice < 1 || choice > 2);
 
@@ -57,23 +62,26 @@ void AccountInfo(const ACCOUNT* account)
         printf("Номер карты: %6s\n", account->card_number);
         printf("Валюта: %6s\n", account->currency);
         printf("Тип карты: %s\n", account->card_type);
-        printf("Баланс: %6.2lf\n", account->balance);
+        printf("Баланс: %6.2lf\n\n", account->balance);
     } else {
-        printf("Какую информацию о вашей расчетной карте вы хотели бы узнать?"
-                "1. Идентификатор\n"
-                "2. Номер карты\n"
-                "3. Валюта\n"
-                "4. Тип карты\n"
-                "5. Баланс\n");
-        
-        // Проверка на попадание в диапазон от (1-5) и отсутствия букв
+        printf("Какую информацию о вашей расчетной карте вы хотели бы узнать?\n"
+               "1. Идентификатор\n"
+               "2. Номер карты\n"
+               "3. Валюта\n"
+               "4. Тип карты\n"
+               "5. Баланс\n");
+
         do {
             printf("Введите ваш выбор (1-5): ");
-            scanf("%hu", &choice);
-            if (isalpha(choice)) {
-                perror("Ошибка! Введите число!\n");
-                choice = 0;
-            }
+            
+            if (scanf("%hu", &choice) != 1) {
+                // Очищаем буфер ввода
+                while (getchar() != '\n');
+                printf("Ошибка! Введите число!\n");
+                choice = 0; 
+            } else 
+                if (choice < 1 || choice > 5)
+                    printf("Ошибка! Выберите число от 1 до 5.\n");
         } while (choice < 1 || choice > 5);
 
         switch (choice) {
@@ -87,10 +95,10 @@ void AccountInfo(const ACCOUNT* account)
                 printf("Валюта: %6s\n", account->currency);
                 break;
             case 4:
-                printf("Тип карты: %6s\n", account->card_type);
+                printf("Тип карты: %10s\n", account->card_type);
                 break;
             case 5:
-                printf("Баланс: %6.2lf\n", account->balance);
+                printf("Баланс: %6.2lf\n\n", account->balance);
                 break;
         }
     }
@@ -151,7 +159,7 @@ void CompareTwoCards(const ACCOUNT* first_card, const ACCOUNT* second_card)
     }        
 
     // Сравнение по типу карт
-    if (first_card->card_type == second_card->card_type) 
+    if (strcmp(first_card->card_type, second_card->card_type) == 0)
         printf("Обе карты имеют одинаковый тип: %s", first_card->card_type);
     else {
         printf("Идентификатор: %s, тип: %s\n", 
@@ -306,9 +314,10 @@ int IsAccountClosed(const ACCOUNT *account)
 void GetBonuses(BONUSES* bonuses, const double amount) 
 {
     if (!bonuses || amount <= 0) return;
+
     double accrued = amount * bonuses->profit_percent;
     bonuses->current_balance += accrued;
-    printf("Начислено%.2f бонусов.\nВсего бонусов: %.2f\n", accrued, bonuses->current_balance);
+    printf("Начислено:%8.2f бонусов.\nВсего бонусов: %.2f\n", accrued, bonuses->current_balance);
 }
 
 double UseBonuses(BONUSES* bonuses, const double max_amount) 
