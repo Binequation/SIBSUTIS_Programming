@@ -1,12 +1,11 @@
 #ifndef ACASH_H
 #define ACASH_H
 
-#include <stdio.h>  // I|O-stream
-#include <time.h>   // Работа с временем (Дата открытия и взятие текущего времени)
-#include <string.h> // Копирование строк, сравнение строк
-#include <stdlib.h> // Использование динамической памяти
 #include <ctype.h>  // Использование для проверки на букву
-
+#include <stdio.h>  // I|O-stream
+#include <stdlib.h> // Использование динамической памяти
+#include <string.h> // Копирование строк, сравнение строк
+#include <time.h>   // Работа с временем (Дата открытия и взятие текущего времени)
 
 // Хранение состояния (типа) карты пользователя
 #define DEBIT  "debit"
@@ -19,39 +18,36 @@
 #define CURRENCY_NAME_LIMIT 20
 #define CARD_TYPE_LIMIT     15
 
-
 // Максимальное количество карт
-#define MAX_ACCOUNTS 4 
+#define MAX_ACCOUNTS 4
 
 // Лимит для отрицательного баланса кредитной карты
 #define NEGATIVE_CREDIT_FIXED 10000
 
 // Хранение информации о дате создания
-typedef struct {
-    int day,
-        month,
-        year;
-} DATE;
+typedef struct { int day, month, year; } DATE;
 
 // Хранение данных о пользовательском счете
-typedef struct {
-    char identifier[IDENTIFIER_LIMIT],     // Идентификатор
-         card_number[CARD_NUMBER_LIMIT],   // Номер расчетной карты
-         currency[CURRENCY_NAME_LIMIT],    // Валюта на карте 
-         card_type[CARD_TYPE_LIMIT];       // Тип карты (дебетовая, кредитная или эскроу)
-    double balance;       // Баланс на счету
-    
-    DATE open_date,       // Дата открытия расчетной карты
-         close_date;      // Дата закрытия расчетной карты
+typedef struct
+{
+    char identifier[IDENTIFIER_LIMIT],   // Идентификатор
+         card_number[CARD_NUMBER_LIMIT], // Номер расчетной карты
+         currency[CURRENCY_NAME_LIMIT],  // Валюта на карте
+         card_type[CARD_TYPE_LIMIT];     // Тип карты (дебетовая, кредитная или эскроу)
+    double balance;                      // Баланс на счету
+
+    DATE open_date, // Дата открытия расчетной карты
+        close_date; // Дата закрытия расчетной карты
 } ACCOUNT;
 
 // Хранение данных о бонусной карте пользователя
-typedef struct {
+typedef struct
+{
     double profit_percent,  // Процент начисления бонусов за каждую операцию
            current_balance; // Текущеее количество доступных бонусов
 } BONUSES;
 
-/* 
+/*
  *
  @brief: Конструктор (время создания берется от текущего момента).
 
@@ -63,22 +59,23 @@ typedef struct {
  *
  *
 */
-ACCOUNT* CreateAccount(
-    const char* identifier,
-    const char* card_number,
-    const char* currency,
-    const char* card_type,
+ACCOUNT *CreateAccount
+(
+    const char *identifier,
+    const char *card_number,
+    const char *currency,
+    const char *card_type,
     const double balance
 );
 
-/* 
+/*
  *
  @brief: Вывод информации о всей карте или отдельных полях расчетной карты
-    
+
  @param: const ACCOUNT* account | Расчетная карта пользователя
  *
 */
-void AccountInfo(const ACCOUNT* account);
+void AccountInfo(const ACCOUNT *account);
 
 /*
  @brief: Сравнения двух объектов структур (по датам, открытия, закрытия,
@@ -89,17 +86,17 @@ void AccountInfo(const ACCOUNT* account);
  *
  *
 */
-void CompareTwoCards(const ACCOUNT* first_card, const ACCOUNT* second_card);
+void CompareTwoCards(const ACCOUNT *first_card, const ACCOUNT *second_card);
 
-/* 
+/*
  *
  @brief: Операция пополнения расчетной карты
- 
+
  @param: ACCOUNT* account | Расчетная карта пользователя
  *
  *
 */
-void DepositAccount(ACCOUNT* account, const double sum_to_deposit);
+void DepositAccount(ACCOUNT *account, const double sum_to_deposit);
 
 /*
  *
@@ -109,7 +106,7 @@ void DepositAccount(ACCOUNT* account, const double sum_to_deposit);
  *
  *
 */
-void WithdrawMoney(ACCOUNT* account, const double sum_to_withdraw);
+void WithdrawMoney(ACCOUNT *account, const double sum_to_withdraw);
 
 /*
  *
@@ -118,7 +115,7 @@ void WithdrawMoney(ACCOUNT* account, const double sum_to_withdraw);
  @param: const ACCOUNT* account | Расчетная карта пользователя
  *
 */
-void StringCardRepresentation(const ACCOUNT* account);
+void StringCardRepresentation(const ACCOUNT *account);
 
 /*
  *
@@ -128,7 +125,7 @@ void StringCardRepresentation(const ACCOUNT* account);
  *
  *
 */
-void ProfitAndWithdraw(const ACCOUNT* account); 
+void ProfitAndWithdraw(const ACCOUNT *account);
 
 /*
  *
@@ -141,22 +138,23 @@ void ProfitAndWithdraw(const ACCOUNT* account);
  *
  *
 */
-void Transfer(
-        ACCOUNT* source_card, 
-        ACCOUNT* destination_card,
-        const double amount, 
-        const double commission_rate
+void Transfer
+(
+    ACCOUNT *source_card,
+    ACCOUNT *destination_card,
+    const double amount,
+    const double commission_rate
 );
 
 /*
  *
  @brief: Проверка, закрыт счёт или нет, в указанной временной точке.
 
- @param const ACCOUNT* account | Расчетная карта пользователя 
+ @param const ACCOUNT* account | Расчетная карта пользователя
  *
  *
 */
-int IsAccountClosed(const ACCOUNT*  account);
+int IsAccountClosed(const ACCOUNT *account);
 
 /*
  *
@@ -166,41 +164,41 @@ int IsAccountClosed(const ACCOUNT*  account);
  *
  *
 */
-void GetBonuses(BONUSES* bonuses, const double amount);
+void GetBonuses(BONUSES *bonuses, const double amount);
 
 /*
  *
- @brief: Частичное погашение суммы с помощью бонусной карты 
+ @brief: Частичное погашение суммы с помощью бонусной карты
 
- @param: const BONUSES* bonuse_account | Бонусная карта 
+ @param: const BONUSES* bonuse_account | Бонусная карта
  @param: ACCOUNT* account              | Расчетная карта пользователя
- @param: int* price                    | Сумма для оплаты 
+ @param: int* price                    | Сумма для оплаты
  *
  *
 */
-double UseBonuses(BONUSES* bonuses, const double max_amount);
+double UseBonuses(BONUSES *bonuses, const double max_amount);
 
 /*
  *
  @brief: Пополнение счета с помощью бонусов
- 
+
  @param: ACCOUNT* account    | Расчетная карта пользователя
  @param: BONUSES* bonuses    | Бонусная карта пользователя
  @param: const double amount | Сумма бонусов для пополения расчетной карты
  *
 */
-void DepositWithBonuses(ACCOUNT* account, BONUSES* bonuses, const double amount);
+void DepositWithBonuses(ACCOUNT *account, BONUSES *bonuses, const double amount);
 
 /*
  *
  @brief: Снятие с помощью бонусов
  *
- @param: ACCOUNT* account    | Расчетная карта пользователя 
+ @param: ACCOUNT* account    | Расчетная карта пользователя
  @param: BONUSES* bonuses    | Бонусная карта пользователя
  @param: const double amount | Сумма бонусов для снятия
  *
 */
-void WithdrawWithBonuses(ACCOUNT* account, BONUSES* bonuses, const double amount);
+void WithdrawWithBonuses(ACCOUNT *account, BONUSES *bonuses, const double amount);
 
 /*
  *
@@ -210,7 +208,7 @@ void WithdrawWithBonuses(ACCOUNT* account, BONUSES* bonuses, const double amount
  @param: double percentage | Процентное соотношение для снятие
  *
 */
-void WithdrawPercentage(ACCOUNT* account, double percentage);
+void WithdrawPercentage(ACCOUNT *account, double percentage);
 
 /*
  *
@@ -220,9 +218,9 @@ void WithdrawPercentage(ACCOUNT* account, double percentage);
  @paraM: double percentage | Процентное соотношение для пополнения
  *
 */
-void DepositPercentage(ACCOUNT* account, double percentage);
+void DepositPercentage(ACCOUNT *account, double percentage);
 
 // "Деструктор" для освобождения ресурсов
-void AccountDestroy(ACCOUNT* account); 
+void AccountDestroy(ACCOUNT *account);
 
 #endif

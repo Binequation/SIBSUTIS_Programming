@@ -1,12 +1,13 @@
 #include "../include/acash.h" // Подключаем заголовочный файл
 
-int main(void) 
+int main(void)
 {
-    ACCOUNT* accounts[MAX_ACCOUNTS] = {NULL}; // Массив для хранения карт
-    int account_count = 0; // Счетчик созданных карт
+    ACCOUNT *accounts[MAX_ACCOUNTS] = {NULL}; // Массив для хранения карт
+    int account_count = 0;                    // Счетчик созданных карт
     int choice;
 
-    do {
+    do
+    {
         printf("\n=== Меню управления картами ===\n"
                "1. Создать новую карту\n"
                "2. Просмотр информации о карте\n"
@@ -20,17 +21,21 @@ int main(void)
         printf("Введите ваш выбор: ");
         scanf("%d", &choice);
 
-        switch (choice) {
-            case 1: { // Создание новой карты
-                if (account_count >= MAX_ACCOUNTS) {
-                    printf("Превышено максимальное количество карт (%d).\n", MAX_ACCOUNTS);
+        switch (choice)
+        {
+            case 1: // Создание новой карты
+                if (account_count >= MAX_ACCOUNTS)
+                {
+                    printf("Превышено максимальное количество карт (%d).\n",
+                        MAX_ACCOUNTS);
                     break;
                 }
 
-                char identifier[IDENTIFIER_LIMIT], card_number[CARD_NUMBER_LIMIT], 
+                char identifier[IDENTIFIER_LIMIT], card_number[CARD_NUMBER_LIMIT],
                      currency[CURRENCY_NAME_LIMIT], card_type[CARD_TYPE_LIMIT];
                 double balance;
 
+                // Считывание полей структуры
                 printf("Введите идентификатор карты: ");
                 scanf("%s", identifier);
                 printf("Введите номер карты: ");
@@ -42,17 +47,29 @@ int main(void)
                 printf("Введите начальный баланс: ");
                 scanf("%lf", &balance);
 
-                accounts[account_count] = CreateAccount(identifier, card_number, currency, card_type, balance);
-                if (accounts[account_count]) {
+                // Добавление карты в общий пулл
+                accounts[account_count] = CreateAccount
+                (
+                    identifier, 
+                    card_number, 
+                    currency, 
+                    card_type, 
+                    balance
+                );
+
+                // Проверка факта создания карты
+                if (accounts[account_count])
+                {
                     printf("Карта успешно создана!\n");
                     account_count++;
-                } else {
-                    printf("Ошибка при создании карты.\n");
                 }
+                else
+                    printf("Ошибка при создании карты.\n");
                 break;
-            }
-            case 2: { // Просмотр информации о карте
-                if (account_count == 0) {
+
+            case 2: // Просмотр информации о карте
+                if (account_count == 0)
+                {
                     printf("Сначала создайте хотя бы одну карту!\n");
                     break;
                 }
@@ -61,16 +78,18 @@ int main(void)
                 printf("Выберите карту (1-%d): ", account_count);
                 scanf("%d", &index);
 
-                if (index < 1 || index > account_count) {
+                if (index < 1 || index > account_count)
+                {
                     printf("Неверный выбор!\n");
                     break;
                 }
 
                 AccountInfo(accounts[index - 1]);
                 break;
-            }
-            case 3: { // Сравнение двух карт
-                if (account_count < 2) {
+
+            case 3: // Сравнение двух карт
+                if (account_count < 2)
+                {
                     printf("Создайте хотя бы две карты для сравнения!\n");
                     break;
                 }
@@ -81,16 +100,18 @@ int main(void)
                 printf("Выберите вторую карту (1-%d): ", account_count);
                 scanf("%d", &index2);
 
-                if (index1 < 1 || index1 > account_count || index2 < 1 || index2 > account_count || index1 == index2) {
+                if (index1 < 1 || index1 > account_count || index2 < 1 || index2 > account_count || index1 == index2)
+                {
                     printf("Неверный выбор!\n");
                     break;
                 }
 
                 CompareTwoCards(accounts[index1 - 1], accounts[index2 - 1]);
                 break;
-            }
-            case 4: { // Внести деньги на карту
-                if (account_count == 0) {
+
+            case 4: // Внести деньги на карту
+                if (account_count == 0)
+                {
                     printf("Сначала создайте хотя бы одну карту!\n");
                     break;
                 }
@@ -99,7 +120,8 @@ int main(void)
                 printf("Выберите карту (1-%d): ", account_count);
                 scanf("%d", &index);
 
-                if (index < 1 || index > account_count) {
+                if (index < 1 || index > account_count)
+                {
                     printf("Неверный выбор!\n");
                     break;
                 }
@@ -110,9 +132,10 @@ int main(void)
 
                 DepositAccount(accounts[index - 1], sum_to_deposit);
                 break;
-            }
-            case 5: { // Снять деньги с карты
-                if (account_count == 0) {
+
+            case 5: // Снять деньги с карты
+                if (account_count == 0)
+                {
                     printf("Сначала создайте хотя бы одну карту!\n");
                     break;
                 }
@@ -121,7 +144,8 @@ int main(void)
                 printf("Выберите карту (1-%d): ", account_count);
                 scanf("%d", &index);
 
-                if (index < 1 || index > account_count) {
+                if (index < 1 || index > account_count)
+                {
                     printf("Неверный выбор!\n");
                     break;
                 }
@@ -132,9 +156,10 @@ int main(void)
 
                 WithdrawMoney(accounts[index - 1], sum_to_withdraw);
                 break;
-            }
-            case 6: { // Перевод денег между картами
-                if (account_count < 2) {
+
+            case 6: // Перевод денег между картами
+                if (account_count < 2)
+                {
                     printf("Создайте хотя бы две карты для перевода!\n");
                     break;
                 }
@@ -145,7 +170,8 @@ int main(void)
                 printf("Выберите целевую карту (1-%d): ", account_count);
                 scanf("%d", &index2);
 
-                if (index1 < 1 || index1 > account_count || index2 < 1 || index2 > account_count || index1 == index2) {
+                if (index1 < 1 || index1 > account_count || index2 < 1 || index2 > account_count || index1 == index2)
+                {
                     printf("Неверный выбор!\n");
                     break;
                 }
@@ -156,22 +182,31 @@ int main(void)
                 printf("Введите комиссию (в процентах): ");
                 scanf("%lf", &commission_rate);
 
-                Transfer(accounts[index1 - 1], accounts[index2 - 1], amount, commission_rate / 100.0);
+                Transfer
+                (
+                    accounts[index1 - 1],
+                    accounts[index2 - 1],
+                    amount,
+                    commission_rate / 100.0
+                );
                 break;
-            }
-            case 7: { // Работа с бонусами
-                if (account_count == 0) {
+
+            case 7: // Работа с бонусами
+                if (account_count == 0)
+                {
                     printf("Сначала создайте хотя бы одну карту!\n");
                     break;
                 }
 
-                BONUSES bonuses = {0, 0.05}; // Бонусная система (начальный баланс = 0, процент начисления = 5%)
+                // Бонусная система (начальный баланс = 0, процент начисления = 5%)
+                BONUSES bonuses = {0, 0.05}; 
 
                 int index;
                 printf("Выберите карту (1-%d): ", account_count);
                 scanf("%d", &index);
 
-                if (index < 1 || index > account_count) {
+                if (index < 1 || index > account_count)
+                {
                     printf("Неверный выбор!\n");
                     break;
                 }
@@ -186,14 +221,16 @@ int main(void)
                 scanf("%lf", &amount);
                 UseBonuses(&bonuses, amount);
                 break;
-            }
+
             case 0:
                 printf("Выход из программы.\n");
-                for (int i = 0; i < account_count; i++) {
+                for (int i = 0; i < account_count; i++)
+                {
                     AccountDestroy(accounts[i]);
                     free(accounts[i]);
                 }
                 break;
+
             default:
                 printf("Неверный выбор! Пожалуйста, выберите снова.\n");
         }
