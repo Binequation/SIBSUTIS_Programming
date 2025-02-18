@@ -31,9 +31,11 @@ int main(void)
                     break;
                 }
 
-                char identifier[IDENTIFIER_LIMIT], card_number[CARD_NUMBER_LIMIT],
-                     currency[CURRENCY_NAME_LIMIT], card_type[CARD_TYPE_LIMIT];
-                double balance;
+                char identifier[IDENTIFIER_LIMIT]   = {0}, 
+                     card_number[CARD_NUMBER_LIMIT] = {0},
+                     currency[CURRENCY_NAME_LIMIT]  = {0}, 
+                     card_type[CARD_TYPE_LIMIT]     = {0};      
+                double balance                      = 0.;
 
                 // Считывание полей структуры
                 printf("Введите идентификатор карты: ");
@@ -66,7 +68,6 @@ int main(void)
                 else
                     printf("Ошибка при создании карты.\n");
                 break;
-
             case 2: // Просмотр информации о карте
                 if (account_count == 0)
                 {
@@ -74,19 +75,18 @@ int main(void)
                     break;
                 }
 
-                int index;
+                int card_idx;
                 printf("Выберите карту (1-%d): ", account_count);
-                scanf("%d", &index);
+                scanf("%d", &card_idx);
 
-                if (index < 1 || index > account_count)
+                if (card_idx < 1 || card_idx > account_count)
                 {
                     printf("Неверный выбор!\n");
                     break;
                 }
 
-                AccountInfo(accounts[index - 1]);
+                AccountInfo(accounts[card_idx - 1]);
                 break;
-
             case 3: // Сравнение двух карт
                 if (account_count < 2)
                 {
@@ -94,21 +94,20 @@ int main(void)
                     break;
                 }
 
-                int index1, index2;
+                int card_idx1, card_idx2;
                 printf("Выберите первую карту (1-%d): ", account_count);
-                scanf("%d", &index1);
+                scanf("%d", &card_idx1);
                 printf("Выберите вторую карту (1-%d): ", account_count);
-                scanf("%d", &index2);
+                scanf("%d", &card_idx2);
 
-                if (index1 < 1 || index1 > account_count || index2 < 1 || index2 > account_count || index1 == index2)
+                if (card_idx1 < 1 || card_idx1 > account_count || card_idx2 < 1 || card_idx2 > account_count || card_idx1 == card_idx2)
                 {
                     printf("Неверный выбор!\n");
                     break;
                 }
 
-                CompareTwoCards(accounts[index1 - 1], accounts[index2 - 1]);
+                CompareTwoCards(accounts[card_idx1 - 1], accounts[card_idx2 - 1]);
                 break;
-
             case 4: // Внести деньги на карту
                 if (account_count == 0)
                 {
@@ -116,11 +115,11 @@ int main(void)
                     break;
                 }
 
-                int index;
+                int card_idx4;
                 printf("Выберите карту (1-%d): ", account_count);
-                scanf("%d", &index);
+                scanf("%d", &card_idx4);
 
-                if (index < 1 || index > account_count)
+                if (card_idx4 < 1 || card_idx4 > account_count)
                 {
                     printf("Неверный выбор!\n");
                     break;
@@ -130,9 +129,8 @@ int main(void)
                 printf("Введите сумму для внесения: ");
                 scanf("%lf", &sum_to_deposit);
 
-                DepositAccount(accounts[index - 1], sum_to_deposit);
+                DepositAccount(accounts[card_idx4 - 1], sum_to_deposit);
                 break;
-
             case 5: // Снять деньги с карты
                 if (account_count == 0)
                 {
@@ -140,11 +138,11 @@ int main(void)
                     break;
                 }
 
-                int index;
+                int card_idx5;
                 printf("Выберите карту (1-%d): ", account_count);
-                scanf("%d", &index);
+                scanf("%d", &card_idx5);
 
-                if (index < 1 || index > account_count)
+                if (card_idx5 < 1 || card_idx5 > account_count)
                 {
                     printf("Неверный выбор!\n");
                     break;
@@ -154,9 +152,8 @@ int main(void)
                 printf("Введите сумму для снятия: ");
                 scanf("%lf", &sum_to_withdraw);
 
-                WithdrawMoney(accounts[index - 1], sum_to_withdraw);
+                WithdrawMoney(accounts[card_idx5 - 1], sum_to_withdraw);
                 break;
-
             case 6: // Перевод денег между картами
                 if (account_count < 2)
                 {
@@ -164,33 +161,32 @@ int main(void)
                     break;
                 }
 
-                int index1, index2;
+                int card_idx6, card_idx7;
                 printf("Выберите исходную карту (1-%d): ", account_count);
-                scanf("%d", &index1);
+                scanf("%d", &card_idx6);
                 printf("Выберите целевую карту (1-%d): ", account_count);
-                scanf("%d", &index2);
+                scanf("%d", &card_idx7);
 
-                if (index1 < 1 || index1 > account_count || index2 < 1 || index2 > account_count || index1 == index2)
+                if (card_idx6 < 1 || card_idx6 > account_count || card_idx7 < 1 || card_idx7 > account_count || card_idx6 == card_idx7)
                 {
                     printf("Неверный выбор!\n");
                     break;
                 }
 
-                double amount, commission_rate;
+                double amount_sum, commission_rate;
                 printf("Введите сумму перевода: ");
-                scanf("%lf", &amount);
+                scanf("%lf", &amount_sum);
                 printf("Введите комиссию (в процентах): ");
                 scanf("%lf", &commission_rate);
 
                 Transfer
                 (
-                    accounts[index1 - 1],
-                    accounts[index2 - 1],
-                    amount,
+                    accounts[card_idx6 - 1],
+                    accounts[card_idx7 - 1],
+                    amount_sum,
                     commission_rate / 100.0
                 );
                 break;
-
             case 7: // Работа с бонусами
                 if (account_count == 0)
                 {
@@ -201,11 +197,11 @@ int main(void)
                 // Бонусная система (начальный баланс = 0, процент начисления = 5%)
                 BONUSES bonuses = {0, 0.05}; 
 
-                int index;
+                int card_idx8;
                 printf("Выберите карту (1-%d): ", account_count);
-                scanf("%d", &index);
+                scanf("%d", &card_idx8);
 
-                if (index < 1 || index > account_count)
+                if (card_idx8 < 1 || card_idx8 > account_count)
                 {
                     printf("Неверный выбор!\n");
                     break;
@@ -215,13 +211,12 @@ int main(void)
 
                 printf("Введите сумму для начисления бонусов: ");
                 scanf("%lf", &amount);
-                DepositWithBonuses(accounts[index - 1], &bonuses, amount);
+                DepositWithBonuses(accounts[card_idx8 - 1], &bonuses, amount);
 
                 printf("Использовать бонусы? (Введите сумму): ");
                 scanf("%lf", &amount);
                 UseBonuses(&bonuses, amount);
                 break;
-
             case 0:
                 printf("Выход из программы.\n");
                 for (int i = 0; i < account_count; i++)

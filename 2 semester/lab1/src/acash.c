@@ -63,11 +63,11 @@ void AccountInfo(const ACCOUNT *account)
     // Вывод всех данных или отдельной информации
     if (choice == 1)
     {
-        printf("Идентификатор: %6s\n", account->identifier);
-        printf("Номер карты: %6s\n",   account->card_number);
-        printf("Валюта: %6s\n",        account->currency);
+        printf("Идентификатор: %s\n", account->identifier);
+        printf("Номер карты: %s\n",   account->card_number);
+        printf("Валюта: %s\n",        account->currency);
         printf("Тип карты: %s\n",      account->card_type);
-        printf("Баланс: %6.2lf\n\n",   account->balance);
+        printf("Баланс: %.2lf\n\n",   account->balance);
     }
     else
     {
@@ -396,8 +396,7 @@ double UseBonuses(BONUSES *bonuses, const double max_amount)
                       ? max_amount : bonuses->current_balance;
     bonuses->current_balance -= used;
     printf("Использовано %.2f бонусов.\nТекущий баланс: %.2f\n",
-           used,
-           bonuses->current_balance);
+           used, bonuses->current_balance);
     return used;
 }
 
@@ -435,7 +434,10 @@ void WithdrawWithBonuses(ACCOUNT *account, BONUSES *bonuses, const double amount
         double bonus_coverage = UseBonuses(bonuses, amount); // Использование бонусов
         double remaining = amount - bonus_coverage;
 
-        account->balance -= remaining;
+        // Если счет больше, чем порог отрицального значения для кредитной карты - снимаем
+        if (!(account->balance <= NEGATIVE_CREDIT_FIXED))
+            account->balance -= remaining;
+            
         printf("Списано %.2f %s (использовано %.2f бонусов).\nТекущий баланс: "
                "%.2f %s\n",
                amount,
