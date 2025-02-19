@@ -66,7 +66,7 @@ void AccountInfo(const ACCOUNT *account)
         printf("Идентификатор: %s\n", account->identifier);
         printf("Номер карты: %s\n",   account->card_number);
         printf("Валюта: %s\n",        account->currency);
-        printf("Тип карты: %s\n",      account->card_type);
+        printf("Тип карты: %s\n",     account->card_type);
         printf("Баланс: %.2lf\n\n",   account->balance);
     }
     else
@@ -326,7 +326,7 @@ void Transfer
     }
 
     // Валюта разная
-    if (strcmp(source_card->currency, destination_card->currency) != 0)
+    if (strcmp(source_card->currency, destination_card->currency) == 0)
     {
         double commission = amount * commission_rate;
         if (source_card->balance < amount + commission)
@@ -382,7 +382,7 @@ void GetBonuses(BONUSES *bonuses, const double amount)
 
     double accrued = amount * bonuses->profit_percent;
     bonuses->current_balance += accrued;
-    printf("Начислено:%8.2f бонусов.\nВсего бонусов: %.2f\n",
+    printf("Начислено:%.2f бонусов.\nВсего бонусов: %.2f\n",
            accrued,
            bonuses->current_balance);
 }
@@ -463,11 +463,4 @@ void WithdrawWithBonuses(ACCOUNT *account, BONUSES *bonuses, const double amount
     }
     else
         printf("Ошибка: недостаточно средств.\n");
-}
-
-void AccountDestroy(ACCOUNT *account)
-{
-    if (!account)
-        return;
-    memset(account, 0, sizeof(ACCOUNT));
 }

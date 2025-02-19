@@ -194,8 +194,8 @@ int main(void)
                     break;
                 }
 
-                // Бонусная система (начальный баланс = 0, процент начисления = 5%)
-                BONUSES bonuses = {0, 0.05}; 
+                // Бонусная система (начальный баланс = 5%, процент начисления = 100)
+                BONUSES bonuses = {0.05, 100}; 
 
                 int card_idx8;
                 printf("Выберите карту (1-%d): ", account_count);
@@ -220,10 +220,7 @@ int main(void)
             case 0:
                 printf("Выход из программы.\n");
                 for (int i = 0; i < account_count; i++)
-                {
-                    AccountDestroy(accounts[i]);
                     free(accounts[i]);
-                }
                 break;
 
             default:

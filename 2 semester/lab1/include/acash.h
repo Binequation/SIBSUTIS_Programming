@@ -55,7 +55,7 @@ typedef struct
  @param: const char* card_number | Номер расчетной карты
  @param: const char* currency    | Валюта на счету
  @param: const char* card_type   | Тип карты: дебетовая, кредитная или эксроу
- @param: const double* balance   | Баланс на счету
+ @param: const double balance    | Баланс на счету
  *
  *
 */
@@ -93,6 +93,7 @@ void CompareTwoCards(const ACCOUNT *first_card, const ACCOUNT *second_card);
  @brief: Операция пополнения расчетной карты
 
  @param: ACCOUNT* account | Расчетная карта пользователя
+ @param: const double sum_to_deposit | Сумма для внесения
  *
  *
 */
@@ -103,6 +104,7 @@ void DepositAccount(ACCOUNT *account, const double sum_to_deposit);
  @brief: Операция снятия/оплаты
 
  @param: ACCOUNT* account | Расчетная карта пользователя
+ @param: const double sum_to_withdraw | Сумма для снятия
  *
  *
 */
@@ -133,8 +135,10 @@ void ProfitAndWithdraw(const ACCOUNT *account);
 взятием фиксированной комиссии при переводе денег со счёта с одной валютой,
 на счёт с другой валютой.
 
- @param: const ACCOUNT* source_card  | Расчетная карта для отпправления перевода
- @param: ACCOUNT* destination_card   | Расчетная карта для получения перевода
+ @param: const ACCOUNT* source_card   | Расчетная карта для отпправления перевода
+ @param: ACCOUNT* destination_card    | Расчетная карта для получения перевода
+ @param: const double amount          | Сумма для перевода
+ @param: const double commission_rate | Коммисия при переводе 
  *
  *
 */
@@ -161,6 +165,7 @@ int IsAccountClosed(const ACCOUNT *account);
  @brief: Начисление бонусов за различные операции
 
  @param: BONUSES* bonuse_account | Бонусная карта для начисления бонусов
+ @param: const double amount     | Сумма с которой будут начисляться бонусы
  *
  *
 */
@@ -170,9 +175,8 @@ void GetBonuses(BONUSES *bonuses, const double amount);
  *
  @brief: Частичное погашение суммы с помощью бонусной карты
 
- @param: const BONUSES* bonuse_account | Бонусная карта
- @param: ACCOUNT* account              | Расчетная карта пользователя
- @param: int* price                    | Сумма для оплаты
+ @param: BONUSES* bonuse_account | Бонусная карта
+ @param: const double max_amount | Сумма для частичного погашения
  *
  *
 */
@@ -220,7 +224,5 @@ void WithdrawPercentage(ACCOUNT *account, double percentage);
 */
 void DepositPercentage(ACCOUNT *account, double percentage);
 
-// "Деструктор" для освобождения ресурсов
-void AccountDestroy(ACCOUNT *account);
 
 #endif
