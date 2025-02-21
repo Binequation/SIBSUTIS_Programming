@@ -22,7 +22,7 @@
 #define MAX_ACCOUNTS 4
 
 // Лимит для отрицательного баланса кредитной карты
-#define NEGATIVE_CREDIT_FIXED 10000
+#define NEGATIVE_CREDIT_FIXED -10000
 
 // Хранение информации о дате создания
 typedef struct { int day, month, year; } DATE;

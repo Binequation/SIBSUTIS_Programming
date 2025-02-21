@@ -123,11 +123,11 @@ void CompareTwoCards(const ACCOUNT *first_card, const ACCOUNT *second_card)
 
     // Сравнение баланса
     if (first_card->balance > second_card->balance)
-        printf("Баланс первой карты больше баланса второй (1: %.2lf, 2: %.2lf\n)",
+        printf("Баланс первой карты больше баланса второй (1: %.2lf, 2: %.2lf)\n",
                first_card->balance,
                second_card->balance);
     else if (first_card->balance < second_card->balance)
-        printf("Баланс первой карты меньше баланса второй (1: %.2lf, 2: %.2lf\n)",
+        printf("Баланс первой карты меньше баланса второй (1: %.2lf, 2: %.2lf)\n",
                first_card->balance,
                second_card->balance);
     else
