@@ -1,27 +1,27 @@
 #ifndef ACASH_H
 #define ACASH_H
 
+#include "cellb.h"  // Интегрируем вторую лабу (ячейку)
+
 #include <ctype.h>  // Использование для проверки на букву
 #include <stdio.h>  // I|O-stream
 #include <stdlib.h> // Использование динамической памяти
 #include <string.h> // Копирование строк, сравнение строк
 #include <time.h>   // Работа с временем (Дата открытия и взятие текущего времени)
+#include <stdint.h>
+#include <stddef.h>
 
 // Хранение состояния (типа) карты пользователя
 #define DEBIT  "debit"
 #define CREDIT "credit"
 #define ESCROW "escrow"
 
-// Ограничения при создании карты
-#define IDENTIFIER_LIMIT    30
-#define CARD_NUMBER_LIMIT   15
-#define CURRENCY_NAME_LIMIT 20
-#define CARD_TYPE_LIMIT     15
-
-// Максимальное количество карт
-#define MAX_ACCOUNTS 4
-
-// Лимит для отрицательного баланса кредитной карты
+// Ограничения 
+#define IDENTIFIER_LIMIT       30
+#define CARD_NUMBER_LIMIT      15
+#define CURRENCY_NAME_LIMIT    20
+#define CARD_TYPE_LIMIT        15
+#define MAX_ACCOUNTS           4
 #define NEGATIVE_CREDIT_FIXED -10000
 
 // Хранение информации о дате создания
@@ -30,21 +30,23 @@ typedef struct { int day, month, year; } DATE;
 // Хранение данных о пользовательском счете
 typedef struct
 {
-    char identifier[IDENTIFIER_LIMIT],   // Идентификатор
-         card_number[CARD_NUMBER_LIMIT], // Номер расчетной карты
-         currency[CURRENCY_NAME_LIMIT],  // Валюта на карте
-         card_type[CARD_TYPE_LIMIT];     // Тип карты (дебетовая, кредитная или эскроу)
-    double balance;                      // Баланс на счету
+    char identifier[IDENTIFIER_LIMIT],
+         card_number[CARD_NUMBER_LIMIT], 
+         currency[CURRENCY_NAME_LIMIT],  
+         card_type[CARD_TYPE_LIMIT];     
+    double balance;                      
 
-    DATE open_date, // Дата открытия расчетной карты
-        close_date; // Дата закрытия расчетной карты
+    DATE open_date, 
+        close_date; 
+ 
+    cellB* bank_cell; 
 } ACCOUNT;
 
 // Хранение данных о бонусной карте пользователя
 typedef struct
 {
-    double profit_percent,  // Процент начисления бонусов за каждую операцию
-           current_balance; // Текущеее количество доступных бонусов
+    double profit_percent,  
+           current_balance; 
 } BONUSES;
 
 /*
@@ -223,6 +225,19 @@ void WithdrawPercentage(ACCOUNT *account, double percentage);
  *
 */
 void DepositPercentage(ACCOUNT *account, double percentage);
+/*
+    @brief: Устанавливает банковскую ячейку
 
+    @param: ACCOUNT* account | Аккаунт для которого будет создана ячейка 
+    @param: cellB* cell      | Ячейка, которую нужно установить для счета
+*/
+void SetBankCell(ACCOUNT* account, cellB* cell);
+
+/*
+    @brief: Информация об ячейке
+
+    @param: Аккаунт о ячейке которого хотим узнать
+*/
+cellB* GetBankCell(const ACCOUNT* account);
 
 #endif

@@ -1,4 +1,5 @@
 #include "../include/acash.h" // Подключаем заголовочный файл
+#include "../include/cellb.h"
 
 ACCOUNT *CreateAccount
 (
@@ -30,6 +31,9 @@ ACCOUNT *CreateAccount
     account->close_date.day   = account->open_date.day;
     account->close_date.month = account->open_date.month;
     account->close_date.year  = account->open_date.year + 6;
+
+    // Устанавливаем банковскую ячейку по умолчанию
+    account->bank_cell = init_cell();
 
     return account;
 }
@@ -68,6 +72,19 @@ void AccountInfo(const ACCOUNT *account)
         printf("Валюта: %s\n",        account->currency);
         printf("Тип карты: %s\n",     account->card_type);
         printf("Баланс: %.2lf\n\n",   account->balance);
+        
+        cellB* cell = GetBankCell(account);
+        if (cell) 
+        {
+            printf("Банковская ячейка:\n");
+            printf("ID: %u\n", get_id(cell));
+            printf("Размер: %hu\n", get_size(cell));
+            printf("Тип доступа: %u\n", get_type(cell));
+            printf("Уровень безопасности: %u\n", get_sec_lvl(cell));
+            printf("Видеонаблюдение: %s\n", get_sec_video(cell) ? "Да" : "Нет");
+            printf("Стоимость аренды: %u\n", get_cost(cell));
+            printf("Срок аренды: %u месяцев\n\n", get_rent(cell));
+        }
     }
     else
     {
@@ -76,7 +93,8 @@ void AccountInfo(const ACCOUNT *account)
                "2. Номер карты\n"
                "3. Валюта\n"
                "4. Тип карты\n"
-               "5. Баланс\n");
+               "5. Баланс\n"
+               "6. Информация о ячейке\n");
 
         do
         {
@@ -109,6 +127,13 @@ void AccountInfo(const ACCOUNT *account)
             break;
         case 5:
             printf("Баланс: %.2lf\n\n", account->balance);
+            break;
+        case 6: 
+            cellB* cell = GetBankCell(account);
+            if (cell) {
+                printf("ID: %u\n", get_id(cell));
+                printf("Размер: %hu\n", get_size(cell));
+            }
             break;
         }
     }
@@ -190,6 +215,17 @@ void CompareTwoCards(const ACCOUNT *first_card, const ACCOUNT *second_card)
         printf("идентификатор: %s, тип: %s\n\n",
                second_card->identifier,
                second_card->card_type);
+    }
+    // Сравнение ячеек
+    cellB* cellA = GetBankCell(first_card->bank_cell);
+    cellB* cellB = GetBankCell(second_card->bank_cell);
+    if (cellA && cellB) {
+        if (get_id(cellA) == get_id(cellB)) {
+            printf("Ячейки одинаковы\n");
+        } else {
+            printf("ID ячейки 1: %u\n", get_id(cellA));
+            printf("ID ячейки 2: %u\n", get_id(cellB));
+        }
     }
 }
 
@@ -463,4 +499,13 @@ void WithdrawWithBonuses(ACCOUNT *account, BONUSES *bonuses, const double amount
     }
     else
         printf("Ошибка: недостаточно средств.\n");
+}
+
+void SetBankCell(ACCOUNT* account, cellB* cell) {
+    if (account->bank_cell) destroy_cell(account->bank_cell);
+    account->bank_cell = cell;
+}
+
+cellB* GetBankCell(const ACCOUNT* account) {
+    return account->bank_cell;
 }
