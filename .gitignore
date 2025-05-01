@@ -4,3 +4,5 @@
 
 # Remove executables 
 *.out
+*.bin
+*.txt
