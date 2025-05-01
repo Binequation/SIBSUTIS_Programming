@@ -1,52 +1,50 @@
 #ifndef ACASH_H
 #define ACASH_H
 
-#include "cellb.h"  // Интегрируем вторую лабу (ячейку)
-
 #include <ctype.h>  // Использование для проверки на букву
-#include <stdio.h>  // I|O-stream
-#include <stdlib.h> // Использование динамической памяти
-#include <string.h> // Копирование строк, сравнение строк
-#include <time.h>   // Работа с временем (Дата открытия и взятие текущего времени)
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>   // I|O-stream
+#include <stdlib.h>  // Использование динамической памяти
+#include <string.h>  // Копирование строк, сравнение строк
+#include <time.h>  // Работа с временем (Дата открытия и взятие текущего времени)
+
+#include "cellb.h"  // Интегрируем вторую лабу (ячейку)
+#include "liststruct.h"  // Интегрируем третью лабу (двусвязанный или двунаправленный список)
 
 // Хранение состояния (типа) карты пользователя
-#define DEBIT  "debit"
+#define DEBIT "debit"
 #define CREDIT "credit"
 #define ESCROW "escrow"
 
-// Ограничения 
-#define IDENTIFIER_LIMIT       30
-#define CARD_NUMBER_LIMIT      15
-#define CURRENCY_NAME_LIMIT    20
-#define CARD_TYPE_LIMIT        15
-#define MAX_ACCOUNTS           4
+// Ограничения
+#define IDENTIFIER_LIMIT 30
+#define CARD_NUMBER_LIMIT 15
+#define CURRENCY_NAME_LIMIT 20
+#define CARD_TYPE_LIMIT 15
+#define MAX_ACCOUNTS 4
 #define NEGATIVE_CREDIT_FIXED -10000
 
 // Хранение информации о дате создания
-typedef struct { int day, month, year; } DATE;
+typedef struct {
+  int day, month, year;
+} DATE;
 
 // Хранение данных о пользовательском счете
-typedef struct
-{
-    char identifier[IDENTIFIER_LIMIT],
-         card_number[CARD_NUMBER_LIMIT], 
-         currency[CURRENCY_NAME_LIMIT],  
-         card_type[CARD_TYPE_LIMIT];     
-    double balance;                      
+typedef struct {
+  char identifier[IDENTIFIER_LIMIT], card_number[CARD_NUMBER_LIMIT],
+      currency[CURRENCY_NAME_LIMIT], card_type[CARD_TYPE_LIMIT];
+  double balance;
 
-    DATE open_date, 
-        close_date; 
- 
-    cellB* bank_cell; 
+  DATE open_date, close_date;
+
+  cellB *bank_cell;
+  DblList *cell;
 } ACCOUNT;
 
 // Хранение данных о бонусной карте пользователя
-typedef struct
-{
-    double profit_percent,  
-           current_balance; 
+typedef struct {
+  double profit_percent, current_balance;
 } BONUSES;
 
 /*
@@ -61,14 +59,9 @@ typedef struct
  *
  *
 */
-ACCOUNT *CreateAccount
-(
-    const char *identifier,
-    const char *card_number,
-    const char *currency,
-    const char *card_type,
-    const double balance
-);
+ACCOUNT *CreateAccount(const char *identifier, const char *card_number,
+                       const char *currency, const char *card_type,
+                       const double balance);
 
 /*
  *
@@ -137,20 +130,16 @@ void ProfitAndWithdraw(const ACCOUNT *account);
 взятием фиксированной комиссии при переводе денег со счёта с одной валютой,
 на счёт с другой валютой.
 
- @param: const ACCOUNT* source_card   | Расчетная карта для отпправления перевода
+ @param: const ACCOUNT* source_card   | Расчетная карта для отпправления
+перевода
  @param: ACCOUNT* destination_card    | Расчетная карта для получения перевода
  @param: const double amount          | Сумма для перевода
- @param: const double commission_rate | Коммисия при переводе 
+ @param: const double commission_rate | Коммисия при переводе
  *
  *
 */
-void Transfer
-(
-    ACCOUNT *source_card,
-    ACCOUNT *destination_card,
-    const double amount,
-    const double commission_rate
-);
+void Transfer(ACCOUNT *source_card, ACCOUNT *destination_card,
+              const double amount, const double commission_rate);
 
 /*
  *
@@ -193,7 +182,8 @@ double UseBonuses(BONUSES *bonuses, const double max_amount);
  @param: const double amount | Сумма бонусов для пополения расчетной карты
  *
 */
-void DepositWithBonuses(ACCOUNT *account, BONUSES *bonuses, const double amount);
+void DepositWithBonuses(ACCOUNT *account, BONUSES *bonuses,
+                        const double amount);
 
 /*
  *
@@ -204,7 +194,8 @@ void DepositWithBonuses(ACCOUNT *account, BONUSES *bonuses, const double amount)
  @param: const double amount | Сумма бонусов для снятия
  *
 */
-void WithdrawWithBonuses(ACCOUNT *account, BONUSES *bonuses, const double amount);
+void WithdrawWithBonuses(ACCOUNT *account, BONUSES *bonuses,
+                         const double amount);
 
 /*
  *
@@ -228,16 +219,16 @@ void DepositPercentage(ACCOUNT *account, double percentage);
 /*
     @brief: Устанавливает банковскую ячейку
 
-    @param: ACCOUNT* account | Аккаунт для которого будет создана ячейка 
+    @param: ACCOUNT* account | Аккаунт для которого будет создана ячейка
     @param: cellB* cell      | Ячейка, которую нужно установить для счета
 */
-void SetBankCell(ACCOUNT* account, cellB* cell);
+void SetBankCell(ACCOUNT *account, cellB *cell);
 
 /*
     @brief: Информация об ячейке
 
     @param: Аккаунт о ячейке которого хотим узнать
 */
-cellB* GetBankCell(const ACCOUNT* account);
+cellB *GetBankCell(const ACCOUNT *account);
 
 #endif

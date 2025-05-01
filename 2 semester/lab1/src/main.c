@@ -1,32 +1,59 @@
-#include "../include/acash.h"
-#include "../include/cellb.h"
+#include <stdio.h>
 
-int main() 
-{
-    ACCOUNT* account = CreateAccount(
-        "User123", "123456789012345", "USD", "debit", 1000.0
-    );
+#include "../include/fioaccount.h"
+#include "../include/liststruct.h"
 
-    cellB* cell = account->bank_cell; // Получаем ячейку из аккаунта
-    if (cell) 
-    {
-        set_id(cell, 12345);          // Уникальный ID
-        set_size(cell, 100);          
-        set_type(cell, 1);            // Тип доступа (0-3)
-        set_sec_lvl(cell, 4);         // Уровень безопасности (0-7)
-        set_sec_video(cell, 1);       // Видеонаблюдение: 1 - есть
-        set_cost(cell, 5000);         // Стоимость аренды в центах (50 USD)
-        set_rent(cell, 12);           // Срок аренды в месяцах
+void print_account(const ACCOUNT *acc) {
+  if (!acc) return;
+  printf(
+      "ID: %s\nНомер: %s\nВалюта: %s\nТип: %s\nБаланс: %.2lf\nДата: "
+      "%d.%d.%d\n\n",
+      acc->identifier, acc->card_number, acc->currency, acc->card_type,
+      acc->balance, acc->open_date.day, acc->open_date.month,
+      acc->open_date.year);
+}
+
+int main(int argc, char *argv[]) {
+  FileMode mode =
+      (argc > 3 && strcmp(argv[3], "binary") == 0) ? BINARY_MODE : TEXT_MODE;
+
+  if (strcmp(argv[1], "save") == 0) {
+    DblList *list = createList();
+    if (!list) {
+      fprintf(stderr, "Ошибка создания списка\n");
+      return 1;
     }
 
-    AccountInfo(account);
-    printf("Пополение наличных: ");
-    DepositAccount(account, 500.0);   // Пополнение
+    rand_gen_struct_in_container(list, 10000);
+    save_accounts(argv[2], list, mode);
 
-    printf("Снятие наличных: ");
-    WithdrawMoney(account, 200.0);    // Снятие
+    clear(list);
+    fList(list);
 
-    // Освобождение памяти
-    destroy_cell(account->bank_cell);
-    free(account);
+  } else if (strcmp(argv[1], "load") == 0) {
+    DblList *list = load_accounts(argv[2], mode);
+
+    if (list) {
+      Node *curr = list->Head;
+
+      while (curr) {
+        print_account((ACCOUNT *)(intptr_t)curr->Data);
+        curr = curr->Next;
+      }
+
+      clear(list);
+      fList(list);
+    }
+  } else if (strcmp(argv[1], "list") == 0) {
+    size_t cnt = count_in_file(argv[2], mode);
+    printf("Кол-во элементов в файле: %ld", cnt);
+  } else if (strcmp(argv[1], "get") == 0) {
+    int idx = atoi(argv[2]);
+    ACCOUNT *acc = get_element_from_file(argv[3], idx, mode);
+
+    print_account(acc);
+    free(acc);
+  }
+
+  return EXIT_SUCCESS;
 }
