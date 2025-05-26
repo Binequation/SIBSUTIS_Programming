@@ -6,3 +6,6 @@
 *.out
 *.bin
 *.txt
+
+# Remove log files
+*.log 
