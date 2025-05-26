@@ -3,7 +3,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
+#define LOAD_FACTOR 0.7
 #define INIT_TABLE_SIZE 2056
 
 /*
@@ -11,11 +13,13 @@
 
     @param: key - string
     @param: value - frequency
+    @param: idx - index
     @param: next - pointer to next bucket
 */
 struct Entry {
     char *key;
     int value;
+    unsigned int idx;
     struct Entry *next;
 };
 
@@ -26,8 +30,9 @@ struct Entry {
     @param: table - array of buckets
 */
 struct HashTable {
-    int size;
-    struct Entry **table;
+    size_t size;
+    size_t capacity;
+    struct Entry **bucket;
 };
 
 /*
@@ -53,11 +58,10 @@ struct HashTable *init_hash(void);
 
     @param: table - hash table to add element
     @param: key - string
-    @param: value - frequency
 
     @return: void
 */
-void add_hash(struct HashTable *table, const char *key, int value);
+void add_hash(struct HashTable *table, const char *key);
 
 /*
     @brief: Find element in hash table
@@ -67,7 +71,7 @@ void add_hash(struct HashTable *table, const char *key, int value);
 
     @return: void
 */
-void find_hash(struct HashTable *table, const int hash_index);
+int find_hash(struct HashTable *table, const char *key);
 
 /*
     @brief: Free hash table
