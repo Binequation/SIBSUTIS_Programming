@@ -33,7 +33,7 @@ void update_stats(struct Stats *stats, const wchar_t *word) {
 
     size_t len = wcslen(word);
     if (len > 0 && len <= MAX_WORD_LENGTH) stats->len_stats[len]++;
-    (starts_with_vowel(word)) ? stats->wvc : stats->ctc++;
+    (starts_with_vowel(word)) ? stats->wvc++ : stats->ctc++;
 
     stats->ttw++;
 }
