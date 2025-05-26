@@ -1,6 +1,7 @@
 #ifndef HASH_TABLE_H
-#include HASH_TABLE_H
+#define HASH_TABLE_H
 
+#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,10 +12,10 @@
 /*
     @brief: Bucket for hash table
 
-    @param: key - string
-    @param: value - frequency
-    @param: idx - index
-    @param: next - pointer to next bucket
+    @field: key - string
+    @field: value - frequency
+    @field: idx - index
+    @field: next - pointer to next bucket
 */
 struct Entry {
     char *key;
@@ -26,13 +27,13 @@ struct Entry {
 /*
     @brief: Hash table
 
-    @param: size - size of hash table
-    @param: table - array of buckets
+    @field: size - size of hash table
+    @field: table - array of buckets
 */
 struct HashTable {
     size_t size;
     size_t capacity;
-    struct Entry **bucket;
+    struct Entry **buckets;
 };
 
 /*
@@ -71,7 +72,7 @@ void add_hash(struct HashTable *table, const char *key);
 
     @return: void
 */
-int find_hash(struct HashTable *table, const char *key);
+int find_hash(const struct HashTable *table, const char *key);
 
 /*
     @brief: Free hash table

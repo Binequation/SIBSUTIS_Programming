@@ -18,8 +18,7 @@ struct HashTable *init_hash(void) {
 
     table->capacity = INIT_TABLE_SIZE;
     table->size = 0;
-    table->buckets =
-        (struct Entry **)malloc(table->capacity, sizeof(struct Entry *));
+    table->buckets = calloc(table->capacity, sizeof(struct Entry *));
     memset(table->buckets, 0, table->capacity);
 
     if (!table->buckets) {
@@ -61,7 +60,7 @@ void add_hash(struct HashTable *table, const char *key) {
 int find_hash(const struct HashTable *table, const char *key) {
     if (!table || !key || table->capacity == 0) return 0;
 
-    unsigned int idx = hash(key, table->capacity);
+    unsigned int idx = KRHash(key) % table->capacity;
     struct Entry *entry = table->buckets[idx];
 
     /* Iterate over linked list (check all collisions)*/
