@@ -115,7 +115,9 @@ void clear(DblList *List) {
   Node *curr = List->Head;
   while (curr) {
     Node *next = curr->Next;
+    ACCOUNT *acc = (ACCOUNT *)(intptr_t)curr->Data;
     free(curr);
+    free(acc);
     curr = next;
   }
 

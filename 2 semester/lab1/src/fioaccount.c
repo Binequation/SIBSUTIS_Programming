@@ -75,7 +75,7 @@ static DblList *load_text(FILE *file) {
     intptr_t day, month, year;
     day = month = year = NULL;
 
-    if (sscanf(line, "%30[^,],%15[^,],%20[^,],%15[^,],%lf,%d.%d.%d",
+    if (sscanf(line, "%30[^,],%15[^,],%20[^,],%15[^,],%lf,%ld.%ld.%ld",
                acc.identifier, acc.card_number, acc.currency, acc.card_type,
                &acc.balance, &day, &month, &year) != 8) {
       continue;
@@ -121,9 +121,9 @@ ACCOUNT *get_element_from_text_file(const char *filename, intptr_t idx) {
       if (!acc) break;
 
       intptr_t day, month, year;
-      if (sscanf(line, "%[^,],%[^,],%[^,],%[^,],%lf,%d.%d.%d", acc->identifier,
-                 acc->card_number, acc->currency, acc->card_type, &acc->balance,
-                 &day, &month, &year) == 8) {
+      if (sscanf(line, "%[^,],%[^,],%[^,],%[^,],%lf,%ld.%ld.%ld",
+                 acc->identifier, acc->card_number, acc->currency,
+                 acc->card_type, &acc->balance, &day, &month, &year) == 8) {
         acc->open_date.day = day;
         acc->open_date.month = month;
         acc->open_date.year = year;
